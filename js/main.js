@@ -105,9 +105,26 @@ function pointToLayer(feature, latlng){
 // this creates the layer with the proportional symbols- places them with the lat and lon
   var layer = L.circleMarker(latlng, geojsonMarkerOptions);
 //this defines the popup content
-  var popupContent = "<p><b>Country</b>" + feature.properties.Country + "</p><p><b>Women in Government "+ attribute + ":</b> " + feature.properties[attribute] + " %  </p>";
+  var panelContent = "<p><b>Country</b>" + feature.properties.Country + "</p><p><b>Women in Government "+ attribute + ":</b> " + feature.properties[attribute] + " %  </p>";
+  var popupContent = feature.properties.Country;
 // this attaches the popup to the layer
-  layer.bindPopup(popupContent);
+  layer.bindPopup(popupContent,{
+    offset: new L.Point(0, -geojsonMarkerOptions.radius),
+    closeButton: false
+  });
+
+  layer.on({
+    mouseover:function(){
+      this.openPopup();
+    },
+    mouseout: function(){
+      this.closePopup();
+    },
+    click: function(){
+      $("#panel").html(panelContent);
+    }
+  });
+
   return layer;
 };
 

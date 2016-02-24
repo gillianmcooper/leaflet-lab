@@ -1,4 +1,11 @@
 /* This is my CSS file!*/
 
 /*setting the map height by calling it by the object id*/
-#map { height: 800px; }
+#map { height: 800px;
+      width: 80%;;
+    display: inline-block;}
+
+#panel{width: 16%;
+        padding: 20px;
+      display:inline-block;
+    vertical-align: top;}
