@@ -9,3 +9,8 @@
         padding: 20px;
       display:inline-block;
     vertical-align: top;}
+.range-slider{
+  width: 50%;
+}
+#slider{width: 80%}
+#popup-info{width:80%}

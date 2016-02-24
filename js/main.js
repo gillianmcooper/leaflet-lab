@@ -75,6 +75,7 @@ function createMap(){
     });
 
     //pulling in the map box tile layer and setting the max zoom
+
     L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
 	maxZoom: 16
@@ -83,6 +84,17 @@ function createMap(){
     //call getData function
     getData(map);
 };
+function createSequenceControls(map){
+  $("#slider").append('<input class="range-slider" type="range">');
+};
+ $('.range-slider').attr({
+   max: 10,
+   min: 0,
+   value: 0,
+   step: 1
+ });
+ $("#slider").append('<button class="skip" id="Reverse"><</button>');
+ $("#slider").append('<button class="skip" id="Forward">></button>');
 
 //setting the marker to a circle marker, defining as a universal varible to be pulled into the getdata function
 function pointToLayer(feature, latlng){
@@ -98,15 +110,22 @@ function pointToLayer(feature, latlng){
   };
 //this selects the attribute from the feature by year
   var attValue = Number(feature.properties[attribute]);
+
 //this pulls in the geojsonMarkerOptions eg. circle size ect. using the assigned attribute value
   geojsonMarkerOptions.radius = calcPropRadius(attValue);
+
   //logging to the console the features and attributes
         console.log(feature.properties, attValue);
+
 // this creates the layer with the proportional symbols- places them with the lat and lon
   var layer = L.circleMarker(latlng, geojsonMarkerOptions);
+
 //this defines the popup content
   var panelContent = "<p><b>Country</b>" + feature.properties.Country + "</p><p><b>Women in Government "+ attribute + ":</b> " + feature.properties[attribute] + " %  </p>";
-  var popupContent = feature.properties.Country;
+
+//putting the content for the mouse over function
+  var popupContent = feature.properties.Country + ", ("+ feature.properties.Code+")";
+
 // this attaches the popup to the layer
   layer.bindPopup(popupContent,{
     offset: new L.Point(0, -geojsonMarkerOptions.radius),
@@ -121,12 +140,13 @@ function pointToLayer(feature, latlng){
       this.closePopup();
     },
     click: function(){
-      $("#panel").html(panelContent);
+      $("#popup-info").html(panelContent);
     }
   });
 
   return layer;
 };
+
 
 function createPropSymbols(data, map){
 //creating a geojson layer too add the proportional symbols to the Map
@@ -137,12 +157,25 @@ function createPropSymbols(data, map){
 
 //scaling each circle marker as a proportional symbol
 function calcPropRadius(attValue) {
-  var scaleFactor = 50;
+  //the factor to scale each symbol by
+  var scaleFactor = 60;
   var area = attValue * scaleFactor;
   var radius = Math.sqrt(area/Math.PI);
 
   return radius;
 };
+
+function processData(data){
+  var attributes=[];
+  var properties=data.features[0].properties;
+  for (var attribute in properties){
+
+    if (attribute.indexOf ()>-1){
+      attributes.push(attributes);
+      console.log(attributes);
+    };
+  };
+}
 
 //Retrieving the data from the geojson and adding the data to the map once it is successfully retrieved
 function getData(map){
@@ -150,9 +183,11 @@ function getData(map){
     $.ajax("data/women_in_power.geojson", {
         dataType: "json",
         success: function(response){
+          var attributes = processData(response);
 //calling the createProportional symbol function
         createPropSymbols(response, map);
-      }
+        createSequenceControls(map, attributes);
+        }
     })
 };
 
