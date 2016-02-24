@@ -85,8 +85,8 @@ function createMap(){
 };
 
 //setting the marker to a circle marker, defining as a universal varible to be pulled into the getdata function
-function createPropSymbols(data, map){
-//selecting the attribute year
+function pointToLayer(feature, latlng){
+//selecting the attribute data year to display
   var attribute = "2015";
   var geojsonMarkerOptions = {
       radius: 9,
@@ -96,21 +96,25 @@ function createPropSymbols(data, map){
       opacity: 1,
       fillOpacity: 0.8
   };
+//this selects the attribute from the feature by year
+  var attValue = Number(feature.properties[attribute]);
+//this pulls in the geojsonMarkerOptions eg. circle size ect. using the assigned attribute value
+  geojsonMarkerOptions.radius = calcPropRadius(attValue);
+  //logging to the console the features and attributes
+        console.log(feature.properties, attValue);
+// this creates the layer with the proportional symbols- places them with the lat and lon
+  var layer = L.circleMarker(latlng, geojsonMarkerOptions);
+//this defines the popup content
+  var popupContent = "<p><b>Country</b>" + feature.properties.Country + "</p><p><b>Women in Government "+ attribute + ":</b> " + feature.properties[attribute] + " %  </p>";
+// this attaches the popup to the layer
+  layer.bindPopup(popupContent);
+  return layer;
+};
 
+function createPropSymbols(data, map){
 //creating a geojson layer too add the proportional symbols to the Map
   L.geoJson(data,{
-    pointToLayer: function(feature, latlng) {
-      var attValue = Number(feature.properties[attribute]);
-      geojsonMarkerOptions.radius = calcPropRadius(attValue);
-      //starting trying to do the popups
-      // var popupContent = "<p><b>Country</b>" + feature.properties.Country + "</p><p><b>"+ attribute + ":</b> " + feature.properties[attribute] + "</p>";
-      // layer.bindPopup(popupContent);
-      // return layer;
-//logging to the console the features and attributes
-      console.log(feature.properties, attValue);
-//allows you to return the value from the function
-      return L.circleMarker(latlng, geojsonMarkerOptions);
-    }
+    pointToLayer: pointToLayer
   }).addTo(map);
 };
 

@@ -4,7 +4,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Croatia",
+        "Country": " Croatia",
         "Country Code": "HRV",
         "1990": "",
         "2000": 20.5,
@@ -30,8 +30,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Czech Republic",
-        "Country Code": "CZE",
+        "Country": " Czech Republic",
+        "Code": "CZE",
         "1990": "",
         "2000": 15,
         "2006": 15.5,
@@ -56,7 +56,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Macedonia, FYR",
+        "Country": " Macedonia, FYR",
         "Country Code": "MKD",
         "1990": "",
         "2000": 6.7,
@@ -82,7 +82,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Greece",
+        "Country": " Greece",
         "Country Code": "GRC",
         "1990": 6.7,
         "2000": 8.7,
@@ -108,7 +108,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Cyprus",
+        "Country": " Cyprus",
         "Country Code": "CYP",
         "1990": 1.8,
         "2000": 7.1,
@@ -134,7 +134,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Slovak Republic",
+        "Country": " Slovak Republic",
         "Country Code": "SVK",
         "1990": "",
         "2000": 14,
@@ -160,7 +160,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Bulgaria",
+        "Country": " Bulgaria",
         "Country Code": "BGR",
         "1990": 21,
         "2000": 10.8,
@@ -186,7 +186,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Bosnia and Herzegovina",
+        "Country": " Bosnia and Herzegovina",
         "Country Code": "BIH",
         "1990": "",
         "2000": "",
@@ -212,7 +212,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Romania",
+        "Country": " Romania",
         "Country Code": "ROM",
         "1990": 34.4,
         "2000": "",
@@ -238,7 +238,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Serbia",
+        "Country": " Serbia",
         "Country Code": "SRB",
         "1990": "",
         "2000": "",
@@ -264,7 +264,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Montenegro",
+        "Country": " Montenegro",
         "Country Code": "MNE",
         "1990": "",
         "2000": "",
@@ -290,7 +290,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Slovenia",
+        "Country": " Slovenia",
         "Country Code": "SVN",
         "1990": "",
         "2000": "",
@@ -316,7 +316,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Hungary",
+        "Country": " Hungary",
         "Country Code": "HUN",
         "1990": 20.7,
         "2000": 8.3,
@@ -342,7 +342,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Poland",
+        "Country": " Poland",
         "Country Code": "POL",
         "1990": 13.5,
         "2000": 13,
@@ -368,7 +368,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Country Name": "Turkey",
+        "Country": " Turkey",
         "Country Code": "TUR",
         "1990": 1.3,
         "2000": 4.2,
