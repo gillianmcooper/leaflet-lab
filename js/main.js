@@ -70,8 +70,8 @@
 function createMap(){
     //create the map
     var map = L.map('map', {
-        center: [20, 0],
-        zoom: 2
+        center: [44, 14],
+        zoom: 5
     });
 
     //pulling in the map box tile layer and setting the max zoom
@@ -85,30 +85,54 @@ function createMap(){
 };
 
 //setting the marker to a circle marker, defining as a universal varible to be pulled into the getdata function
-var geojsonMarkerOptions = {
-    radius: 9,
-    fillColor: "#662441",
-    color: "#662441",
-    weight: 1,
-    opacity: 1,
-    fillOpacity: 0.8
+function createPropSymbols(data, map){
+//selecting the attribute year
+  var attribute = "2015";
+  var geojsonMarkerOptions = {
+      radius: 9,
+      fillColor: "#662441",
+      color: "#662441",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.8
+  };
+
+//creating a geojson layer too add the proportional symbols to the Map
+  L.geoJson(data,{
+    pointToLayer: function(feature, latlng) {
+      var attValue = Number(feature.properties[attribute]);
+      geojsonMarkerOptions.radius = calcPropRadius(attValue);
+      //starting trying to do the popups
+      // var popupContent = "<p><b>Country</b>" + feature.properties.Country + "</p><p><b>"+ attribute + ":</b> " + feature.properties[attribute] + "</p>";
+      // layer.bindPopup(popupContent);
+      // return layer;
+//logging to the console the features and attributes
+      console.log(feature.properties, attValue);
+//allows you to return the value from the function
+      return L.circleMarker(latlng, geojsonMarkerOptions);
+    }
+  }).addTo(map);
 };
+
+//scaling each circle marker as a proportional symbol
+function calcPropRadius(attValue) {
+  var scaleFactor = 50;
+  var area = attValue * scaleFactor;
+  var radius = Math.sqrt(area/Math.PI);
+
+  return radius;
+};
+
 //Retrieving the data from the geojson and adding the data to the map once it is successfully retrieved
 function getData(map){
     //load the data through ajax when it is successfully read peforming the annoymous function response
     $.ajax("data/women_in_power.geojson", {
         dataType: "json",
         success: function(response){
-            // //create a Leaflet GeoJSON layer and add it to the map
-            L.geoJson(response, {
-                pointToLayer: function (feature, latln) {
-                  //calling the geojson options to make the marker a circle at each lat/lon's specified in the geojson called through response
-
-                    return L.circleMarker(latln, geojsonMarkerOptions);
-                }
-            }).addTo(map);
-        }
-    });
+//calling the createProportional symbol function
+        createPropSymbols(response, map);
+      }
+    })
 };
 
 
