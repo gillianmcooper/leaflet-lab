@@ -10,7 +10,15 @@
       display:inline-block;
     vertical-align: top;}
 .range-slider{
-  width: 50%;
+  width: 90%;
 }
-#slider{width: 80%}
+#forward{
+    width: 50%;
+  float: right;
+}
+#reverse{
+  width: 50%;
+  float: left;
+}
+/*#slider{width: 80%}*/
 #popup-info{width:80%}

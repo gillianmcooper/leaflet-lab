@@ -84,22 +84,64 @@ function createMap(){
     //call getData function
     getData(map);
 };
-function createSequenceControls(map){
-  $("#slider").append('<input class="range-slider" type="range">');
-};
+function createSequenceControls(map, attributes){
+  var SequenceControl = L.Control.extend({
+    options:{
+      posistion: 'bottomleft'
+    },
+    onAdd: function(map){
+      var container = L.DomUtil.create('div', 'sequence-control-container');
+      $(container).append('<input class="range-slider" type="range">');
+
+//add skip buttons
+$(container).append('<button class="skip" id="reverse" title="Reverse">Reverse</button>');
+$(container).append('<button class="skip" id="forward" title="Forward">Skip</button>');
+
+//kill any mouse event listeners on the map
+$(container).on('mousedown dblclick', function(e){
+  L.DomEvent.stopPropagation(e);
+});
+return container;
+    }
+  });
+//  $("#slider").append('<input class="range-slider" type="range">');
+map.addControl(new SequenceControl());
  $('.range-slider').attr({
-   max: 10,
+   max: 11,
    min: 0,
    value: 0,
    step: 1
  });
- $("#slider").append('<button class="skip" id="Reverse"><</button>');
- $("#slider").append('<button class="skip" id="Forward">></button>');
+
+
+
+ $('.skip').click(function(){
+    var index = $('.range-slider').val();
+    if($(this).attr('id')=='forward'){
+      index++;
+      index = index > 11 ? 0 : index;
+    } else if ($(this).attr('id') == 'reverse'){
+      index--;
+      index = index < 0 ? 11 : index;
+    };
+
+  $('.range-slider').val(index);
+ updatePropSymbols(map, attributes[index]);
+  console.log(attributes[index]);
+});
+
+  $('.range-slider').on('input', function(){
+    var index = $(this).val();
+  updatePropSymbols(map, attributes[index]);
+  });
+};
+
+
 
 //setting the marker to a circle marker, defining as a universal varible to be pulled into the getdata function
-function pointToLayer(feature, latlng){
+function pointToLayer(feature, latlng, attributes){
 //selecting the attribute data year to display
-  var attribute = "2015";
+  var attribute = attributes[0];
   var geojsonMarkerOptions = {
       radius: 9,
       fillColor: "#662441",
@@ -115,13 +157,13 @@ function pointToLayer(feature, latlng){
   geojsonMarkerOptions.radius = calcPropRadius(attValue);
 
   //logging to the console the features and attributes
-        console.log(feature.properties, attValue);
+      //  console.log(feature.properties, attValue);
 
 // this creates the layer with the proportional symbols- places them with the lat and lon
   var layer = L.circleMarker(latlng, geojsonMarkerOptions);
 
 //this defines the popup content
-  var panelContent = "<p><b>Country</b>" + feature.properties.Country + "</p><p><b>Women in Government "+ attribute + ":</b> " + feature.properties[attribute] + " %  </p>";
+  var panelContent = "<p><b>Country: </b>" + feature.properties.Country + "</p>";
 
 //putting the content for the mouse over function
   var popupContent = feature.properties.Country + ", ("+ feature.properties.Code+")";
@@ -146,14 +188,24 @@ function pointToLayer(feature, latlng){
 
   return layer;
 };
+function updatePropSymbols(map, attribute){
+    map.eachLayer(function(layer){
+        if (layer.feature && layer.feature.properties[attribute]){
+            var props = layer.feature.properties;
+            var radius = calcPropRadius(props[attribute]);
+            layer.setRadius(radius);
 
+            var popupContent = "<p><b>Country: " + props.Country + "</p>";
+            var year = attribute.split("_")[1];
+            popupContent += "</p><p><b>Women in Government "+ attribute + ":</b> " + props[attribute] + " %  </p>";
+            layer.bindPopup(popupContent,{
+              offset: new L.Point(0, -radius)
+            })
 
-function createPropSymbols(data, map){
-//creating a geojson layer too add the proportional symbols to the Map
-  L.geoJson(data,{
-    pointToLayer: pointToLayer
-  }).addTo(map);
+        };
+    });
 };
+
 
 //scaling each circle marker as a proportional symbol
 function calcPropRadius(attValue) {
@@ -170,12 +222,22 @@ function processData(data){
   var properties=data.features[0].properties;
   for (var attribute in properties){
 
-    if (attribute.indexOf ()>-1){
-      attributes.push(attributes);
-      console.log(attributes);
+    if (attribute.indexOf ("Per") > -1){
+      attributes.push(attribute);
     };
   };
-}
+  // console.log(attributes);
+  return attributes;
+};
+
+function createPropSymbols(data, map, attributes){
+//creating a geojson layer too add the proportional symbols to the Map
+  L.geoJson(data, {
+    pointToLayer: function(feature, latlng){
+      return pointToLayer(feature, latlng, attributes);
+    }
+  }).addTo(map);
+};
 
 //Retrieving the data from the geojson and adding the data to the map once it is successfully retrieved
 function getData(map){
@@ -185,8 +247,8 @@ function getData(map){
         success: function(response){
           var attributes = processData(response);
 //calling the createProportional symbol function
-        createPropSymbols(response, map);
-        createSequenceControls(map, attributes);
+          createPropSymbols(response, map, attributes);
+          createSequenceControls(map, attributes);
         }
     })
 };
