@@ -77,8 +77,8 @@ night = L.tileLayer('http://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y
 function createMap(){
     //create the map, and adding the layer options
     var map = L.map('map', {
-        center: [44, 14],
-        zoom: 5,
+        center: [46, 17],
+        zoom: 6,
         layer:[night]
     });
 
@@ -104,16 +104,17 @@ function createSequenceControls(map, attributes){
     onAdd: function(map){
       var container = L.DomUtil.create('div', 'sequence-control-container');
       $(container).append('<input class="range-slider" type="range">');
-
-//add skip buttons both forward and reverse- styling is in the css
-$(container).append('<button class="skip" id="reverse" title="Reverse">Reverse</button>');
-$(container).append('<button class="skip" id="forward" title="Forward">Skip</button>');
-
-return container;
+      //add skip buttons both forward and reverse- styling is in the css
+      $(container).append('<button class="skip" id="reverse" title="Reverse">Reverse</button>');
+      $(container).append('<button class="skip" id="forward" title="Forward">Skip</button>');
+      $(container).on('mousedown dblclick', function(e){
+                L.DomEvent.stopPropagation(e);
+            });
+      return container;
     }
   });
 //defining the range control on the slider bar for the number of years to scroll through
-map.addControl(new SequenceControl());
+  map.addControl(new SequenceControl());
  $('.range-slider').attr({
    max: 11,
    min: 0,
@@ -144,12 +145,11 @@ map.addControl(new SequenceControl());
   });
 };
 
-
-
 //setting the marker to a circle marker, defining as a universal varible to be pulled into the getdata function
 function pointToLayer(feature, latlng, attributes){
 //selecting the attribute data year to display
   var attribute = attributes[0];
+  console.log(attribute);
   var geojsonMarkerOptions = {
       radius: 9,
       fillColor: "#ff00bf",
@@ -180,6 +180,7 @@ function pointToLayer(feature, latlng, attributes){
   layer.bindPopup(popupContent,{
     offset: new L.Point(0, -geojsonMarkerOptions.radius),
     closeButton: false
+
   });
 
   layer.on({
@@ -213,13 +214,15 @@ function updatePropSymbols(map, attribute){
 
         };
     });
+    updateLegend(map, attribute);
 };
+
 
 
 //scaling each circle marker as a proportional symbol
 function calcPropRadius(attValue) {
   //the factor to scale each symbol by
-  var scaleFactor = 90;
+  var scaleFactor = 500;
   var area = attValue * scaleFactor;
   var radius = Math.sqrt(area/Math.PI);
 
@@ -257,11 +260,95 @@ function getData(map){
           var attributes = processData(response);
 //calling the createProportional symbol function
           createPropSymbols(response, map, attributes);
-//calling the create sequence control           
+//calling the create sequence control
           createSequenceControls(map, attributes);
+          createLegend(map, attributes);
         }
     })
 };
 
+function getCircleValues(map, attribute){
+  var min = Infinity,
+      max = -Infinity;
+
+    map.eachLayer(function(layer){
+        //get the attribute value
+        if (layer.feature){
+
+          var attributeValue = Number(layer.feature.properties[attribute]);
+console.log(attribute);
+            //test for min
+            if (attributeValue < min){
+                min = attributeValue;
+            };
+            //test for max
+            if (attributeValue > max){
+                max = attributeValue;
+            };
+        };
+    });
+    //set mean
+    var mean = (max + min) / 2;
+    // console.log();
+    //return values as an object
+    return {
+        max: max,
+        mean: mean,
+        min: min
+    };
+};
+function updateLegend(map, attribute){
+      $('.legend-control-container').append('<div id="temporal-legend">')
+      // console.log(attribute)
+      var year = attribute[0].split("_")[1];
+      var content = "Percentage of Women in Power "+ year;
+      $('#temporal-legend').html(content);
+
+      var circleValues = getCircleValues(map, attribute);
+
+
+   for (var key in circleValues){
+       //get the radius
+       var radius = calcPropRadius(circleValues[key]);
+
+       //Step 3: assign the cy and r attributes
+       $('#'+key).attr({
+           cy: 179 - radius,
+           r: radius
+       });
+   };
+};
+
+function createLegend(map, attributes){
+  var LegendControl = L.Control.extend({
+    options:{
+      position: 'bottomleft'
+    },
+    onAdd: function (map){
+      var container = L.DomUtil.create('div', 'legend-control-container');
+
+      $(container).append('<div id="temporal-legend">')
+      var svg = '<svg id="attribute-legend" width="180px" height="180px">';
+
+      var circles = ["max", "mean", "min"];
+
+      for (var i=0; i<circles.length; i++){
+                  //circle string
+                  svg += '<circle class="legend-circle" id="' + circles[i] +
+                  '" fill="#F47821" fill-opacity="0.8" stroke="#000000" cx="90"/>';
+              };
+              svg += "</svg>";
+
+    $(container).append(svg);
+      return container;
+
+    }
+    });
+    map.addControl(new LegendControl());
+    updateLegend(map, attributes[0]);
+
+
+
+};
 
 $(document).ready(createMap);
