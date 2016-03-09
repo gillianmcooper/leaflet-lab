@@ -171,9 +171,10 @@ function pointToLayer(feature, latlng, attributes){
   var layer = L.circleMarker(latlng, geojsonMarkerOptions);
 
 //this defines the popup content
-  var panelContent = "<p><b>Country: </b>" + feature.properties.Country + "</p>";
+  var panelContent = "<p><b>You are looking at: </b>" + feature.properties.Country + "</p>";
 
 //putting the content for the mouse over function
+
   var popupContent = feature.properties.Country + ", ("+ feature.properties.Code+")";
 
 // this attaches the popup to the layer
