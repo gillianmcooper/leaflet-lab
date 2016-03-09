@@ -152,7 +152,7 @@ function pointToLayer(feature, latlng, attributes){
   console.log(attribute);
   var geojsonMarkerOptions = {
       radius: 9,
-      fillColor: "#ff00bf",
+      fillColor: "#ff5050",
       color: "#662441",
       weight: 1,
       opacity: 1,
@@ -320,14 +320,19 @@ function createLegend(map, attributes){
       var container = L.DomUtil.create('div', 'legend-control-container');
 
       $(container).append('<div id="temporal-legend">')
-      var svg = '<svg id="attribute-legend" width="180px" height="180px">';
+      var svg = '<svg id="attribute-legend" width="350px" height="250px">';
 
-      var circles = ["max", "mean", "min"];
+      var circles = {
+        max: 20,
+        mean: 40,
+        min: 60
+      };
 
-      for (var i=0; i<circles.length; i++){
+      for (var circle in circles){
                   //circle string
-                  svg += '<circle class="legend-circle" id="' + circles[i] +
-                  '" fill="#F47821" fill-opacity="0.8" stroke="#000000" cx="90"/>';
+                  svg += '<circle class="legend-circle" id="' + circle + '" fill="#ff5050" fill-opacity="1" stroke="#000000" cx="90"/>';
+
+                  svg += '<text id="' + circle + '-text" x="150" y="' + circles[circle] + '"></text>';
               };
               svg += "</svg>";
 
