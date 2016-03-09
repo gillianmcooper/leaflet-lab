@@ -228,18 +228,7 @@ function calcPropRadius(attValue) {
 
   return radius;
 };
-// calling through each year of the geojson data
-function processData(data){
-  var attributes=[];
-  var properties=data.features[0].properties;
-  for (var attribute in properties){
 
-    if (attribute.indexOf ("Per") > -1){
-      attributes.push(attribute);
-    };
-  };
-  return attributes;
-};
 
 //defining the proportional symbols to express the data- will be manipulated above by year
 function createPropSymbols(data, map, attributes){
@@ -300,8 +289,9 @@ console.log(attribute);
 function updateLegend(map, attribute){
       $('.legend-control-container').append('<div id="temporal-legend">')
       // console.log(attribute)
-      var year = attribute[0].split("_")[1];
+      var year = attribute.split("_")[1];
       var content = "Percentage of Women in Power "+ year;
+      console.log(year);
       $('#temporal-legend').html(content);
 
       var circleValues = getCircleValues(map, attribute);
@@ -316,6 +306,8 @@ function updateLegend(map, attribute){
            cy: 179 - radius,
            r: radius
        });
+       $('#'+key+'-text').text(Math.round(circleValues[key]*100)/100 + " Percent");
+
    };
 };
 
@@ -339,7 +331,7 @@ function createLegend(map, attributes){
               };
               svg += "</svg>";
 
-    $(container).append(svg);
+      $(container).append(svg);
       return container;
 
     }
@@ -347,8 +339,18 @@ function createLegend(map, attributes){
     map.addControl(new LegendControl());
     updateLegend(map, attributes[0]);
 
+};
+// calling through each year of the geojson data
+function processData(data){
+  var attributes=[];
+  var properties=data.features[0].properties;
+  for (var attribute in properties){
 
-
+    if (attribute.indexOf ("Per") > -1){
+      attributes.push(attribute);
+    };
+  };
+  return attributes;
 };
 
 $(document).ready(createMap);

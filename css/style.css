@@ -1,12 +1,14 @@
 /* This is my CSS file!*/
 
 /*setting the map height by calling it by the object id*/
-#title{height: 100px;
+#title{height: 200px;
       width: 100%;
       font-family: Arial;
       font-size: 100pt;
       color: pink;
-      text-align: center;}
+      text-align: center;
+      background-color: grey;
+      }
 
 #map { height: 1000px;
       width: 80%;;
@@ -15,7 +17,9 @@
 #panel{width: 16%;
         padding: 20px;
         display:inline-block;
-        vertical-align: top;}
+        vertical-align: top;
+        background-color: grey;
+        height:100%;}
 /*.range-slider{
         width: 90%;
         height: 20pt;
@@ -47,7 +51,7 @@
                           height: 100%;
                           background-color: white;
 }
-
+.legend-circle{color: red;}
 .sequence-control-container {
     width: 350px;
     height: 30px;
@@ -57,6 +61,7 @@
     text-align: center;
     border: solid gray 1px;
 }
+
 
 .range-slider {
     width: 300px;
